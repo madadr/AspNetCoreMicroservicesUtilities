@@ -1,38 +1,36 @@
-﻿using System.Threading.Tasks;
-using Common.Application.EventBus;
+﻿using Common.Application.EventBus;
 using Common.Application.Events;
+using Common.Application.Events.Handlers;
 using Common.Infrastructure.EventBus;
 using EasyNetQ;
 using EasyNetQ.Management.Client;
-using EasyNetQ.Management.Client.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Tickets.Api.Extensions
+namespace Common.Api.Extensions
 {
     public static class StartupServicesExtensions
     {
         public static void AddEventBus(this IServiceCollection services)
         {
-            // TODO: generate from app settings
+            // TODO: generate connectionString from appSettings
             var connectionString =
                 "host=localhost:5672;virtualHost=/;username=guest;password=guest";
             var bus = RabbitHutch.CreateBus(connectionString);
             services.AddSingleton(typeof(IBus), bus);
             var managementClient = new ManagementClient("http://localhost", "guest", "guest");
-            services.AddSingleton(typeof(IManagementClient), managementClient);
             services.AddTransient(typeof(IMessageBroker), typeof(MessageBroker));
         }
 
-        public static async Task PublishesEvent<T>(this IApplicationBuilder app, ILogger logger)
-            where T : IIntegrationEvent
+        public static void SubscribeEvent<T>(this IApplicationBuilder app, ILogger logger, string serviceName)
+            where T : class, IIntegrationEvent
         {
-            var topic = typeof(T).FullName + ".*";
-            var managementClient = (IManagementClient) app.ApplicationServices.GetService(typeof(IManagementClient));
-            await managementClient.CreateExchangeAsync(new ExchangeInfo(topic, "topic"),
-                await managementClient.GetVhostAsync("/"));
-            logger.LogInformation($"Service publishes events at topic {topic}");
+            var subscriptionId = typeof(T).FullName + "." + serviceName;
+            var eventHandler = (IEventHandler<T>) app.ApplicationServices.GetService(typeof(IEventHandler<T>));
+            var bus = (IBus) app.ApplicationServices.GetService(typeof(IBus));
+            bus.Subscribe<T>(subscriptionId, async x => await eventHandler.HandleAsync(x));
+            logger.LogInformation($"Service subscribed for event with subscription ID: {subscriptionId}");
         }
     }
 }

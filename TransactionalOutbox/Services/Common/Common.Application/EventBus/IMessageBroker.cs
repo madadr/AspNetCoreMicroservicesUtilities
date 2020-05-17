@@ -5,6 +5,6 @@ namespace Common.Application.EventBus
 {
     public interface IMessageBroker
     {
-        Task PublishAsync(IIntegrationEvent @event);
+        Task PublishAsync<T>(T @event) where T : class, IIntegrationEvent;
     }
 }

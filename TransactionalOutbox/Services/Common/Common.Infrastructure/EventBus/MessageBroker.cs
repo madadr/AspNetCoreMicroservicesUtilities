@@ -2,10 +2,8 @@
 using Common.Application.EventBus;
 using Common.Application.Events;
 using Common.Infrastructure.Exceptions;
-using Microsoft.Extensions.Logging;
 using EasyNetQ;
-using EasyNetQ.Management.Client;
-using EasyNetQ.Management.Client.Model;
+using Microsoft.Extensions.Logging;
 
 namespace Common.Infrastructure.EventBus
 {
@@ -13,27 +11,23 @@ namespace Common.Infrastructure.EventBus
     {
         private readonly ILogger<IMessageBroker> _logger;
         private readonly IBus _bus;
-        private readonly IManagementClient _managementClient;
 
-        public MessageBroker(ILogger<IMessageBroker> logger, IBus bus, IManagementClient managementClient)
+        public MessageBroker(ILogger<IMessageBroker> logger, IBus bus)
         {
             _logger = logger;
             _bus = bus;
-            _managementClient = managementClient;
         }
 
-        public async Task PublishAsync(IIntegrationEvent @event)
+        public async Task PublishAsync<T>(T @event) where T : class, IIntegrationEvent
         {
-            _logger.Log(LogLevel.Information, $"MessageBroker requested event of type: {@event.GetType()}");
+            _logger.Log(LogLevel.Information, $"Requested publishing event of type: {@event.GetType()}");
+
             if (!_bus.IsConnected)
             {
                 throw new InfrastructureException("Lost connection with event bus.");
             }
 
-            var topic = @event.GetType() + ".*";
-            var exchange = await _managementClient.CreateExchangeAsync(new ExchangeInfo(topic, "topic"),
-                await _managementClient.GetVhostAsync("/"));
-            await _bus.PublishAsync(@event, topic);
+            await _bus.PublishAsync<T>(@event);
         }
     }
 }
