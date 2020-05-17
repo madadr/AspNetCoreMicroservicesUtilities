@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 
-namespace Tickets.Application.Commands.Handlers
+namespace Common.Application.Commands.Handlers
 {
     public interface ICommandHandler<T> where T : ICommand
     {
-        public Task HandleAsync(T command);
+        Task HandleAsync(T command);
     }
 }

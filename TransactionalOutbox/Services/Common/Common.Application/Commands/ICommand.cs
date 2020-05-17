@@ -1,4 +1,4 @@
-﻿namespace Tickets.Application.Commands
+﻿namespace Common.Application.Commands
 {
     public interface ICommand
     {

@@ -1,33 +1,40 @@
+using System.Threading.Tasks;
+using Common.Application.Commands;
+using Common.Application.Commands.Handlers;
+using Common.Application.Events;
+using EasyNetQ;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Tickets.Api.Extensions;
 using Tickets.Application.Commands;
 using Tickets.Application.Commands.Handlers;
-using Tickets.Application.EventBus;
-using Tickets.Infrastructure.EventBus;
 
 namespace Tickets.Api
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
+        private readonly IConfiguration _configuration;
 
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
             services.AddTransient(typeof(ICommandHandler<BuyTicketCommand>), typeof(BuyTicketCommandHandler));
-            services.AddTransient(typeof(IMessageBroker), typeof(MessageBroker));
+            services.AddEventBus();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
+            app.PublishesEvent<TicketBoughtIntegrationEvent>(logger).Wait();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -1,4 +1,4 @@
-﻿namespace Tickets.Application.Events
+﻿namespace Common.Application.Events
 {
     public interface IIntegrationEvent
     {

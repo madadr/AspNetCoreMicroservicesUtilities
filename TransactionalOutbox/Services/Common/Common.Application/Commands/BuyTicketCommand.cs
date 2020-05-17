@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Tickets.Application.Commands
+namespace Common.Application.Commands
 {
     public class BuyTicketCommand : ICommand
     {

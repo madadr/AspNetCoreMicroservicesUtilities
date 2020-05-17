@@ -1,4 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
+using Common.Application.Commands;
+using Common.Application.Commands.Handlers;
+using Common.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Tickets.Application.Commands;
@@ -28,8 +33,14 @@ namespace Tickets.Api.Controllers
             {
                 await _commandHandler.HandleAsync(command);
             }
-            catch
+            catch (InfrastructureException ex)
             {
+                _logger.LogError($"Server error during processing command: {ex.Message}");
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogInformation($"Client error during processing command: {ex.Message}");
                 return BadRequest();
             }
 

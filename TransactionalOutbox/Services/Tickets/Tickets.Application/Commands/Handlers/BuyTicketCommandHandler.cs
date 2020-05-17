@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Tickets.Application.EventBus;
-using Tickets.Application.Events;
+using Common.Application.Commands;
+using Common.Application.Commands.Handlers;
+using Common.Application.EventBus;
+using Common.Application.Events;
 
 namespace Tickets.Application.Commands.Handlers
 {
@@ -17,13 +19,13 @@ namespace Tickets.Application.Commands.Handlers
         public async Task HandleAsync(BuyTicketCommand command)
         {
             await ProcessBuyTicketTransactionAsync();
-            await _messageBroker.PublishAsync(new TicketBoughtIntegrationEvent(command.CustomerId, command.Seat));
+            await _messageBroker.PublishAsync(new TicketBoughtIntegrationEvent(command.CustomerId, command.MovieId,
+                command.Seat));
         }
 
         private async Task ProcessBuyTicketTransactionAsync()
         {
-            // Simulate transaction processing
-            await Task.Delay(TimeSpan.FromSeconds(0.5));
+            await Task.CompletedTask;
         }
     }
 }

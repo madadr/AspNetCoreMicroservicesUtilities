@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Tickets.Application.Events;
+using Common.Application.Events;
 
-namespace Tickets.Application.EventBus
+namespace Common.Application.EventBus
 {
     public interface IMessageBroker
     {

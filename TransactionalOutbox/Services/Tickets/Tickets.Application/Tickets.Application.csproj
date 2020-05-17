@@ -5,4 +5,7 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Properties\launchSettings.json" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Application\Common.Application.csproj" />
+  </ItemGroup>
 </Project>
