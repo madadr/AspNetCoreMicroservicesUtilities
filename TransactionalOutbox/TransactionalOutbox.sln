@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Application", "Servi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Infrastructure", "Services\Common\Common.Infrastructure\Common.Infrastructure.csproj", "{E19F3F07-9DAA-4910-BB4C-D2AE2379FEDC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailNotifications.Application", "Services\MailNotifications\MailNotifications.Application\MailNotifications.Application.csproj", "{39901207-0065-4187-AC13-A2B0CEDD7253}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +110,18 @@ Global
 		{E19F3F07-9DAA-4910-BB4C-D2AE2379FEDC}.Release|x64.Build.0 = Release|Any CPU
 		{E19F3F07-9DAA-4910-BB4C-D2AE2379FEDC}.Release|x86.ActiveCfg = Release|Any CPU
 		{E19F3F07-9DAA-4910-BB4C-D2AE2379FEDC}.Release|x86.Build.0 = Release|Any CPU
+		{39901207-0065-4187-AC13-A2B0CEDD7253}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39901207-0065-4187-AC13-A2B0CEDD7253}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39901207-0065-4187-AC13-A2B0CEDD7253}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{39901207-0065-4187-AC13-A2B0CEDD7253}.Debug|x64.Build.0 = Debug|Any CPU
+		{39901207-0065-4187-AC13-A2B0CEDD7253}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{39901207-0065-4187-AC13-A2B0CEDD7253}.Debug|x86.Build.0 = Debug|Any CPU
+		{39901207-0065-4187-AC13-A2B0CEDD7253}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39901207-0065-4187-AC13-A2B0CEDD7253}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39901207-0065-4187-AC13-A2B0CEDD7253}.Release|x64.ActiveCfg = Release|Any CPU
+		{39901207-0065-4187-AC13-A2B0CEDD7253}.Release|x64.Build.0 = Release|Any CPU
+		{39901207-0065-4187-AC13-A2B0CEDD7253}.Release|x86.ActiveCfg = Release|Any CPU
+		{39901207-0065-4187-AC13-A2B0CEDD7253}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{66E8AD11-2E2B-47A7-B160-7861FE13E1B1} = {CC854165-78BB-4694-BA51-C1221359B643}
@@ -119,5 +133,6 @@ Global
 		{F4B3B04F-859E-44D5-BD26-FE5DB35FDD12} = {AD4D2176-8C41-4E3C-9B23-D907EF49694B}
 		{F22A8856-B65E-4805-9144-32140038279D} = {AD4D2176-8C41-4E3C-9B23-D907EF49694B}
 		{E19F3F07-9DAA-4910-BB4C-D2AE2379FEDC} = {AD4D2176-8C41-4E3C-9B23-D907EF49694B}
+		{39901207-0065-4187-AC13-A2B0CEDD7253} = {66E8AD11-2E2B-47A7-B160-7861FE13E1B1}
 	EndGlobalSection
 EndGlobal

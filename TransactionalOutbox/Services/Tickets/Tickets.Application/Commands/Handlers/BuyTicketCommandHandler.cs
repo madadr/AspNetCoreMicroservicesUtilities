@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Common.Application.Commands;
 using Common.Application.Commands.Handlers;
 using Common.Application.EventBus;
@@ -19,8 +18,7 @@ namespace Tickets.Application.Commands.Handlers
         public async Task HandleAsync(BuyTicketCommand command)
         {
             await ProcessBuyTicketTransactionAsync();
-            await _messageBroker.PublishAsync(new TicketBoughtIntegrationEvent(command.CustomerId, command.MovieId,
-                command.Seat));
+            await _messageBroker.PublishAsync(new TicketBoughtEvent(command.CustomerId, command.MovieId, command.Seat));
         }
 
         private async Task ProcessBuyTicketTransactionAsync()
