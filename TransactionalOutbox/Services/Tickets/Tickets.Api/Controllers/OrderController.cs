@@ -34,9 +34,9 @@ namespace Tickets.Api.Controllers
             catch (InfrastructureException ex)
             {
                 _logger.LogError($"Server error during processing command: {ex.Message}");
-                return StatusCode((int)HttpStatusCode.InternalServerError);
+                return StatusCode((int) HttpStatusCode.InternalServerError);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogInformation($"Client error during processing command: {ex.Message}");
                 return BadRequest();

@@ -1,24 +1,32 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Common.Application.Commands;
 using Common.Application.Commands.Handlers;
-using Common.Application.EventBus;
 using Common.Application.Events;
+using Common.Application.Events.Outbox;
+using Microsoft.Extensions.Logging;
 
 namespace Tickets.Application.Commands.Handlers
 {
     public class BuyTicketCommandHandler : ICommandHandler<BuyTicketCommand>
     {
-        private readonly IMessageBroker _messageBroker;
+        private readonly IIntegrationEventRepository<TicketBoughtEvent> _eventRepository;
+        private readonly ILogger<BuyTicketCommandHandler> _logger;
 
-        public BuyTicketCommandHandler(IMessageBroker messageBroker)
+        public BuyTicketCommandHandler(IIntegrationEventRepository<TicketBoughtEvent> eventRepository,
+            ILogger<BuyTicketCommandHandler> logger)
         {
-            _messageBroker = messageBroker;
+            _eventRepository = eventRepository;
+            _logger = logger;
         }
 
         public async Task HandleAsync(BuyTicketCommand command)
         {
+            _logger.LogInformation($"Processing command {command}");
             await ProcessBuyTicketTransactionAsync();
-            await _messageBroker.PublishAsync(new TicketBoughtEvent(command.CustomerId, command.MovieId, command.Seat));
+            var @event = new TicketBoughtEvent(Guid.NewGuid(), command.CustomerId, command.MovieId, command.Seat);
+            _logger.LogInformation($"Enqueuing {@event}:{@event.Id}");
+            await _eventRepository.AddAsync(@event);
         }
 
         private async Task ProcessBuyTicketTransactionAsync()

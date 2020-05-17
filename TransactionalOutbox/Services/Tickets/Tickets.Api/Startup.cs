@@ -1,6 +1,9 @@
 using Common.Api.Extensions;
 using Common.Application.Commands;
 using Common.Application.Commands.Handlers;
+using Common.Application.Events;
+using Common.Application.Events.Outbox;
+using Common.Infrastructure.Outbox;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,10 +28,15 @@ namespace Tickets.Api
             services.AddControllers();
             services.AddTransient(typeof(ICommandHandler<BuyTicketCommand>), typeof(BuyTicketCommandHandler));
             services.AddEventBus();
+            services.AddMongo();
+            services.AddSingleton(typeof(IIntegrationEventRepository<TicketBoughtEvent>),
+                typeof(IntegrationEventRepository<TicketBoughtEvent>));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
+            app.PublishesEvent<TicketBoughtEvent>(logger);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

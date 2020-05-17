@@ -7,7 +7,7 @@ namespace MailNotifications.Application.Events.Handlers
 {
     public class TicketBoughtEventHandler : IEventHandler<TicketBoughtEvent>
     {
-        private ILogger<TicketBoughtEventHandler> _logger;
+        private readonly ILogger<TicketBoughtEventHandler> _logger;
 
         public TicketBoughtEventHandler(ILogger<TicketBoughtEventHandler> logger)
         {
@@ -16,7 +16,7 @@ namespace MailNotifications.Application.Events.Handlers
 
         public async Task HandleAsync(TicketBoughtEvent @event)
         {
-            _logger.LogInformation($"TicketBoughtEventHandler: received event {@event}");
+            _logger.LogInformation($"TicketBoughtEventHandler: received event {@event}:{@event.Id}");
             await Task.CompletedTask;
         }
     }

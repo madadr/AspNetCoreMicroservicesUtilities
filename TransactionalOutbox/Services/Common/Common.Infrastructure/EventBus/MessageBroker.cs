@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Common.Application.EventBus;
 using Common.Application.Events;
 using Common.Infrastructure.Exceptions;
@@ -27,7 +28,14 @@ namespace Common.Infrastructure.EventBus
                 throw new InfrastructureException("Lost connection with event bus.");
             }
 
-            await _bus.PublishAsync<T>(@event);
+            try
+            {
+                await _bus.PublishAsync<T>(@event);
+            }
+            catch (Exception e)
+            {
+                throw new InfrastructureException($"Error during publish. Details: {e.Message}");
+            }
         }
     }
 }
