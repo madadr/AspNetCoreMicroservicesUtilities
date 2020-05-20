@@ -10,7 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Tickets.Api.TestApi;
 using Tickets.Application.Commands.Handlers;
+using Tickets.Application.TestApi;
 
 namespace Tickets.Api
 {
@@ -31,6 +33,9 @@ namespace Tickets.Api
             services.AddMongo();
             services.AddSingleton(typeof(IIntegrationEventRepository<TicketBoughtEvent>),
                 typeof(IntegrationEventRepository<TicketBoughtEvent>));
+            
+            // Test API
+            services.AddCounter<IProcessedCommands>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
@@ -45,7 +50,10 @@ namespace Tickets.Api
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

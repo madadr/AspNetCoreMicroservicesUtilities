@@ -21,7 +21,7 @@ namespace Common.Infrastructure.EventBus
 
         public async Task PublishAsync<T>(T @event) where T : class, IIntegrationEvent
         {
-            _logger.Log(LogLevel.Information, $"Requested publishing event of type: {@event.GetType()}");
+            _logger.LogDebug($"Requested publishing event of type: {@event.GetType()}");
 
             if (!_bus.IsConnected)
             {

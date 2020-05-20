@@ -31,23 +31,26 @@ namespace Common.Api.Extensions
             var eventHandler = (IEventHandler<T>) app.ApplicationServices.GetService(typeof(IEventHandler<T>));
             var bus = (IBus) app.ApplicationServices.GetService(typeof(IBus));
 
-            // TODO: Investigate if EasyNetQ contains any subscriptions recovery after bus reconnection.
-            Task.Run(async () =>
-            {
-                bool wasConnectedDuringLastCheck = false;
-                while (true)
-                {
-                    if (bus.IsConnected && !wasConnectedDuringLastCheck)
-                    {
-                        bus.Subscribe<T>(subscriptionId, async x => await eventHandler.HandleAsync(x));
-                        logger.LogInformation(
-                            $"Subscription created or recovered for event with subscription ID: {subscriptionId}");
-                    }
+            Task.Run(async () => await SuperviseEventSubscriptionAsync(logger, bus, subscriptionId, eventHandler));
+        }
 
-                    wasConnectedDuringLastCheck = bus.IsConnected;
-                    await Task.Delay(TimeSpan.FromSeconds(3));
+        private static async Task SuperviseEventSubscriptionAsync<T>(ILogger logger, IBus bus, string subscriptionId,
+            IEventHandler<T> eventHandler) where T : class, IIntegrationEvent
+        {
+            // TODO: Investigate if EasyNetQ contains any subscriptions recovery after bus reconnection.
+            bool wasConnectedDuringLastCheck = false;
+            while (true)
+            {
+                if (bus.IsConnected && !wasConnectedDuringLastCheck)
+                {
+                    bus.Subscribe<T>(subscriptionId, async x => await eventHandler.HandleAsync(x));
+                    logger.LogInformation(
+                        $"Subscription created or recovered for event with subscription ID: {subscriptionId}");
                 }
-            });
+
+                wasConnectedDuringLastCheck = bus.IsConnected;
+                await Task.Delay(TimeSpan.FromSeconds(3));
+            }
         }
 
         public static void PublishesEvent<T>(this IApplicationBuilder app, ILogger logger)
@@ -59,32 +62,41 @@ namespace Common.Api.Extensions
 
             var messageBroker = (IMessageBroker) app.ApplicationServices.GetService(typeof(IMessageBroker));
             var period = TimeSpan.FromSeconds(3);
-            Task.Run(async () =>
-            {
-                while (true)
-                {
-                    await Task.Delay(period);
-                    logger.LogInformation($"Periodic fetch of messages for type: {typeof(T).FullName}");
-                    foreach (var @event in await eventRepository.GetAllAsync())
-                    {
-                        var eventId = $"{@event}:{@event.Id}";
-                        try
-                        {
-                            logger.LogInformation($"Trying to publish: {eventId}");
-                            await messageBroker.PublishAsync(@event);
-                            logger.LogInformation($"Event published: {eventId}");
-                            await eventRepository.RemoveAsync(@event);
-                            logger.LogInformation($"Removed from store: {eventId}");
-                        }
-                        catch (Exception exception)
-                        {
-                            logger.LogInformation($"Failed to publish: {eventId}. Details: {exception.Message}");
-                        }
-                    }
-                }
-            });
-            logger.LogInformation(
+            Task.Run(async () => await PublishUnprocessedEventsPeriodicallyAsync(logger, period, eventRepository, messageBroker));
+            logger.LogDebug(
                 $"Service will publish periodically ({period.ToString()}) events of type: {typeof(T).FullName}");
+        }
+
+        private static async Task PublishUnprocessedEventsPeriodicallyAsync<T>(ILogger logger, TimeSpan period,
+            IIntegrationEventRepository<T> eventRepository, IMessageBroker messageBroker) where T : class, IIntegrationEvent
+        {
+            while (true)
+            {
+                await Task.Delay(period);
+                await PublishUnprocessedEventsAsync(logger, eventRepository, messageBroker);
+            }
+        }
+
+        private static async Task PublishUnprocessedEventsAsync<T>(ILogger logger,
+            IIntegrationEventRepository<T> eventRepository, IMessageBroker messageBroker) where T : class, IIntegrationEvent
+        {
+            logger.LogDebug($"Periodic fetch of messages for type: {typeof(T).FullName}");
+            foreach (var @event in await eventRepository.GetAllAsync())
+            {
+                var eventId = $"{@event}:{@event.Id}";
+                try
+                {
+                    logger.LogDebug($"Trying to publish: {eventId}");
+                    await messageBroker.PublishAsync(@event);
+                    logger.LogDebug($"Event published: {eventId}");
+                    await eventRepository.RemoveAsync(@event);
+                    logger.LogDebug($"Removed from store: {eventId}");
+                }
+                catch (Exception exception)
+                {
+                    logger.LogError($"Failed to publish: {eventId}. Details: {exception.Message}");
+                }
+            }
         }
     }
 }

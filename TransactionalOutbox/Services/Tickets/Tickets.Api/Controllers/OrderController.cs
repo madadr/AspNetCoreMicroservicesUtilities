@@ -6,6 +6,7 @@ using Common.Application.Commands.Handlers;
 using Common.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Tickets.Api.TestApi;
 
 namespace Tickets.Api.Controllers
 {
@@ -25,7 +26,7 @@ namespace Tickets.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> BuyTicket([FromBody] BuyTicketCommand command)
         {
-            _logger.LogInformation($"BuyTicketCommand: {command}.");
+            _logger.LogDebug($"BuyTicketCommand: {command}.");
 
             try
             {
@@ -38,7 +39,7 @@ namespace Tickets.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Client error during processing command: {ex.Message}");
+                _logger.LogDebug($"Client error during processing command: {ex.Message}");
                 return BadRequest();
             }
 
