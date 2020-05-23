@@ -2,7 +2,7 @@
 
 namespace Common.Application.Events.Handlers
 {
-    public interface IEventHandler<T> where T : IIntegrationEvent
+    public interface IEventHandler<in T> where T : IEvent
     {
         Task HandleAsync(T @event);
     }

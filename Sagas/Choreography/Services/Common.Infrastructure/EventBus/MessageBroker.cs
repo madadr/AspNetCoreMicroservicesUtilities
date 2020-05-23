@@ -19,7 +19,7 @@ namespace Common.Infrastructure.EventBus
             _bus = bus;
         }
 
-        public async Task PublishAsync<T>(T @event) where T : class, IIntegrationEvent
+        public async Task PublishAsync<T>(T @event) where T : class, IEvent
         {
             _logger.LogDebug($"Requested publishing event of type: {@event.GetType()}");
 

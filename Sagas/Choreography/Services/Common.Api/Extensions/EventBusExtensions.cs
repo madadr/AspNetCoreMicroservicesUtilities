@@ -24,7 +24,7 @@ namespace Common.Api.Extensions
         }
 
         public static void SubscribeEvent<T>(this IApplicationBuilder app, ILogger logger, string serviceName)
-            where T : class, IIntegrationEvent
+            where T : class, IEvent
         {
             var subscriptionId = typeof(T).FullName + "." + serviceName;
             var eventHandler = (IEventHandler<T>) app.ApplicationServices.GetService(typeof(IEventHandler<T>));
@@ -34,7 +34,7 @@ namespace Common.Api.Extensions
         }
 
         private static async Task SuperviseEventSubscriptionAsync<T>(ILogger logger, IBus bus, string subscriptionId,
-            IEventHandler<T> eventHandler) where T : class, IIntegrationEvent
+            IEventHandler<T> eventHandler) where T : class, IEvent
         {
             // TODO: Investigate if EasyNetQ contains any subscriptions recovery after bus reconnection.
             bool wasConnectedDuringLastCheck = false;
