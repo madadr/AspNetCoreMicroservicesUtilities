@@ -4,21 +4,29 @@ namespace Orders.Core.Entities
 {
     public class Order
     {
-        public Guid OrderId { get; }
-        public int CustomerId { get; }
-        public int ProductId { get; }
-        public double Price { get; }
-        public OrderState State { get; }
-        public string AdditionalInfo { get; }
+        public Guid Id { get; set; }
+        public int ClientId { get; set; }
+        public int ProductId { get; set; }
+        public double Price { get; set; }
+        public OrderState State { get; set; }
+        public string AdditionalInfo { get; set; }
+        public DateTime? PlacedAt { get; set; }
+        public DateTime? ApprovedAt { get; set; }
+        public DateTime? CancelledAt { get; set; }
 
-        public Order(Guid orderId, int customerId, int productId, double price, OrderState state = OrderState.Created, string additionalInfo = "")
+        public Order(Guid id, int clientId, int productId, double price, OrderState state = OrderState.Created,
+            DateTime? placedAt = null, DateTime? approvedAt = null, DateTime? cancelledAt = null,
+            string additionalInfo = "")
         {
-            OrderId = orderId;
-            CustomerId = customerId;
+            Id = id;
+            ClientId = clientId;
             ProductId = productId;
             Price = price;
             State = state;
             AdditionalInfo = additionalInfo;
+            PlacedAt = placedAt;
+            ApprovedAt = approvedAt;
+            CancelledAt = cancelledAt;
         }
     }
 }

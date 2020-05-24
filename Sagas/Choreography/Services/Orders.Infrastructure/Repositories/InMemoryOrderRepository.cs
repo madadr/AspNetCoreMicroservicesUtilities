@@ -20,7 +20,7 @@ namespace Orders.Infrastructure.Repositories
         public async Task<Order> GetAsync(Guid id)
         {
             await Task.CompletedTask;
-            return _list.FirstOrDefault(o => o.OrderId == id);
+            return _list.FirstOrDefault(o => o.Id == id);
         }
 
         public async Task<IEnumerable<Order>> GetAllAsync()
@@ -31,9 +31,9 @@ namespace Orders.Infrastructure.Repositories
 
         public async Task UpdateAsync(Order order)
         {
-            if (await GetAsync(order.OrderId) is {})
+            if (await GetAsync(order.Id) is {})
             {
-                await RemoveAsync(order.OrderId);
+                await RemoveAsync(order.Id);
                 await AddAsync(order);
             }
         }

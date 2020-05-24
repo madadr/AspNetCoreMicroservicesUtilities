@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Common.Api.Extensions;
 using Common.Application.Commands.Handlers;
 using Common.Application.Events;
 using Common.Application.Events.Handlers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -31,10 +26,14 @@ namespace Orders.Api
             services.AddEventBus();
             services.AddTransient(typeof(ICommandHandler<PlaceOrder>), typeof(PlaceOrderCommandHandler));
             services.AddTransient(typeof(ICommandHandler<CancelOrder>), typeof(CancelOrderCommandHandler));
+            services.AddTransient(typeof(ICommandHandler<ApproveOrder>), typeof(ApproveOrderCommandHandler));
             services.AddSingleton(typeof(IOrderRepository), typeof(InMemoryOrderRepository));
-            services.AddTransient(typeof(IEventHandler<CreateNewOrderFailed>), typeof(CreateNewOrderFailedEventHandler));
+            services.AddTransient(typeof(IEventHandler<CreateNewOrderFailed>),
+                typeof(CreateNewOrderFailedEventHandler));
             services.AddTransient(typeof(IEventHandler<ClientNotPermitted>), typeof(ClientNotPermittedEventHandler));
-            services.AddTransient(typeof(IEventHandler<ProductReservationCancelled>), typeof(ProductReservationCancelledEventHandler));
+            services.AddTransient(typeof(IEventHandler<ProductReservationCancelled>),
+                typeof(ProductReservationCancelledEventHandler));
+            services.AddTransient(typeof(IEventHandler<PaymentAccepted>), typeof(PaymentAcceptedEventHandler));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +42,7 @@ namespace Orders.Api
             app.SubscribeEvent<CreateNewOrderFailed>(logger, "Orders");
             app.SubscribeEvent<ClientNotPermitted>(logger, "Orders");
             app.SubscribeEvent<ProductReservationCancelled>(logger, "Orders");
+            app.SubscribeEvent<PaymentAccepted>(logger, "Orders");
 
             if (env.IsDevelopment())
             {

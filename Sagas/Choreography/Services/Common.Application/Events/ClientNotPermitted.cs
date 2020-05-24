@@ -8,7 +8,7 @@ namespace Common.Application.Events
         public int ClientId { get; }
         public string Reason { get; }
 
-        public ClientNotPermitted(Guid orderId, int clientId, string reason)
+        public ClientNotPermitted(Guid orderId, int clientId, string reason = "ClientNotPermitted")
         {
             OrderId = orderId;
             ClientId = clientId;

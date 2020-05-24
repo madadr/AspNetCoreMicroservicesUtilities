@@ -8,7 +8,7 @@ namespace Orders.Application.Events
         public Guid Id { get; }
         public string Reason { get; }
 
-        public CreateNewOrderFailed(Guid id, string reason)
+        public CreateNewOrderFailed(Guid id, string reason = "CreateNewOrderFailed")
         {
             Id = id;
             Reason = reason;

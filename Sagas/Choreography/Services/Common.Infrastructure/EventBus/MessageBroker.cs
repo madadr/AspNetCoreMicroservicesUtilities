@@ -5,6 +5,7 @@ using Common.Application.Events;
 using Common.Infrastructure.Exceptions;
 using EasyNetQ;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Common.Infrastructure.EventBus
 {
@@ -21,10 +22,11 @@ namespace Common.Infrastructure.EventBus
 
         public async Task PublishAsync<T>(T @event) where T : class, IEvent
         {
-            _logger.LogDebug($"Requested publishing event of type: {@event.GetType()}");
+            _logger.LogInformation($"Publishing {@event.GetType()}:{JsonConvert.SerializeObject(@event)}");
 
             if (!_bus.IsConnected)
             {
+                _logger.LogError($"Failed to publish {@event.GetType()} as broker not connected.");
                 throw new InfrastructureException("Lost connection with event bus.");
             }
 
@@ -34,6 +36,7 @@ namespace Common.Infrastructure.EventBus
             }
             catch (Exception e)
             {
+                _logger.LogError($"Failed to publish {@event.GetType()}. Reason: {e.Message}.");
                 throw new InfrastructureException($"Error during publish. Details: {e.Message}");
             }
         }

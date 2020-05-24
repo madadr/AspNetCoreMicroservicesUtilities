@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Threading.Tasks;
 using Common.Application.EventBus;
 using Common.Application.Events;
@@ -17,7 +17,7 @@ namespace Common.Api.Extensions
         {
             // TODO: generate connectionString from appSettings
             var connectionString =
-                "host=localhost:5672;virtualHost=/;username=guest;password=guest";
+                "host=rabbitmq:5672;virtualHost=/;username=guest;password=guest";
             var bus = RabbitHutch.CreateBus(connectionString);
             services.AddSingleton(typeof(IBus), bus);
             services.AddTransient(typeof(IMessageBroker), typeof(MessageBroker));
@@ -43,8 +43,7 @@ namespace Common.Api.Extensions
                 if (bus.IsConnected && !wasConnectedDuringLastCheck)
                 {
                     bus.Subscribe<T>(subscriptionId, async x => await eventHandler.HandleAsync(x));
-                    logger.LogInformation(
-                        $"Subscription created or recovered for event with subscription ID: {subscriptionId}");
+                    logger.LogInformation($"Subscription created or recovered for event with subscription ID: {subscriptionId}");
                 }
 
                 wasConnectedDuringLastCheck = bus.IsConnected;

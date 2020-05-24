@@ -6,16 +6,22 @@ namespace Orders.Application.Commands
     public class PlaceOrder : ICommand
     {
         public Guid Id { get; }
-        public int CustomerId { get; }
+        public int ClientId { get; }
         public int ProductId { get; }
         public double Price { get; }
+        public DateTime? PlacedAt { get; }
 
-        public PlaceOrder(Guid id, int customerId, int productId, double price)
+        public PlaceOrder()
+        {
+        }
+
+        public PlaceOrder(Guid id, int clientId, int productId, double price, DateTime? placedAt)
         {
             Id = id;
-            CustomerId = customerId;
+            ClientId = clientId;
             ProductId = productId;
             Price = price;
+            PlacedAt = placedAt;
         }
     }
 }

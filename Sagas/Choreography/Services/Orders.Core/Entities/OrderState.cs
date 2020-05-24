@@ -2,6 +2,8 @@
 {
     public enum OrderState
     {
-        Created, Approved, Cancelled
+        Created,
+        Approved,
+        Cancelled
     }
 }

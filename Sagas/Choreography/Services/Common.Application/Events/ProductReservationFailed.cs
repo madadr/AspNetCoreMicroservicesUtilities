@@ -8,7 +8,7 @@ namespace Common.Application.Events
         public int ProductId { get; }
         public string Reason { get; }
 
-        public ProductReservationFailed(Guid orderId, int productId, string reason)
+        public ProductReservationFailed(Guid orderId, int productId, string reason = "ProductReservationFailed")
         {
             OrderId = orderId;
             ProductId = productId;

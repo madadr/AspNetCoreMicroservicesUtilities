@@ -2,7 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>Orders</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Clients.Application\Clients.Application.csproj" />
+    <ProjectReference Include="..\Common.Api\Common.Api.csproj" />
+  </ItemGroup>
 
 </Project>

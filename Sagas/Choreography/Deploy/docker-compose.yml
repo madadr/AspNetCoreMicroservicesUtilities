@@ -1,0 +1,59 @@
+version: "3.8"
+
+volumes:
+  rabbit-volume: {}
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    volumes:
+      - rabbit-volume:/var/lib/rabbitmq/
+    ports:
+      - 5672:5672
+      - 15672:15672
+    logging:
+      driver: none # disable logs
+
+  clients-api:
+    build: ../Services/Clients.Api
+    image: choreography.clients.api
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+    restart: on-failure
+    ports:
+      - 5550:80
+
+  orders-api:
+    build: ../Services/Orders.Api
+    image: choreography.orders.api
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+    restart: on-failure
+    ports:
+      - 5551:80
+
+  payments-api:
+    build: ../Services/Payments.Api
+    image: choreography.payments.api
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+    restart: on-failure
+    ports:
+      - 5552:80
+
+  store-api:
+    build: ../Services/Store.Api
+    image: choreography.store.api
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+    restart: on-failure
+    ports:
+      - 5553:80
