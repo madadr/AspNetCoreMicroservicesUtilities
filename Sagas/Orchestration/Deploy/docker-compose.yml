@@ -1,0 +1,59 @@
+version: "3.8"
+
+volumes:
+  rabbit-volume: {}
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    volumes:
+      - rabbit-volume:/var/lib/rabbitmq/
+    ports:
+      - 5672:5672
+      - 15672:15672
+    logging:
+      driver: none # disable logs
+
+  clients-api:
+    build: ../Services/Clients.Api
+    image: orchestration.clients.api
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+    restart: on-failure
+    ports:
+      - 5650:80
+
+  orders-api:
+    build: ../Services/Orders.Api
+    image: orchestration.orders.api
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+    restart: on-failure
+    ports:
+      - 5651:80
+
+  payments-api:
+    build: ../Services/Payments.Api
+    image: orchestration.payments.api
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+    restart: on-failure
+    ports:
+      - 5652:80
+
+  store-api:
+    build: ../Services/Store.Api
+    image: orchestration.store.api
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+    restart: on-failure
+    ports:
+      - 5653:80
