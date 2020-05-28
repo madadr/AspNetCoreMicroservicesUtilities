@@ -1,0 +1,46 @@
+version: "3.8"
+
+volumes:
+  rabbit-volume: {}
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    volumes:
+      - rabbit-volume:/var/lib/rabbitmq/
+    ports:
+      - 5672:5672
+      - 15672:15672
+    logging:
+      driver: none # disable logs
+
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    logging:
+      driver: none # disable logs
+
+  tickets-api:
+    build: ../Services/Tickets.Api
+    image: hc.tickets.api
+    depends_on:
+      - rabbitmq
+      - mongo
+    links:
+      - rabbitmq
+      - mongo
+    restart: on-failure
+    ports:
+      - 5650:80
+
+  notifications-api:
+    build: ../Services/MailNotifications.Api
+    image: hc.notifications.api
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+    restart: on-failure
+    ports:
+      - 5651:80
