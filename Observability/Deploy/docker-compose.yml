@@ -30,17 +30,22 @@ services:
     links:
       - rabbitmq
       - mongo
-    restart: on-failure
     ports:
-      - 5650:80
+      - 5750:80
+    healthcheck:
+      test: curl --fail -s http://localhost:80/hc
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
-  notifications-api:
+  mail-notifications-api:
     build: ../Services/MailNotifications.Api
-    image: hc.notifications.api
+    image: hc.mail-notifications.api
     depends_on:
       - rabbitmq
     links:
       - rabbitmq
     restart: on-failure
     ports:
-      - 5651:80
+      - 5751:80

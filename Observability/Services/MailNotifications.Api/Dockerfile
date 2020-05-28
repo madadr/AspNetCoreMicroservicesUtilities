@@ -4,4 +4,4 @@ COPY ./bin/Docker .
 EXPOSE 80/tcp
 EXPOSE 81/tcp
 ENV ASPNETCORE_ENVIRONMENT Release
-ENTRYPOINT ["dotnet", "Tickets.Api.dll"]
+ENTRYPOINT ["dotnet", "MailNotifications.Api.dll"]

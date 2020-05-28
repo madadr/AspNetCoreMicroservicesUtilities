@@ -63,7 +63,7 @@ namespace Common.Api.Extensions
             var messageBroker = (IMessageBroker) app.ApplicationServices.GetService(typeof(IMessageBroker));
             var period = TimeSpan.FromSeconds(3);
             Task.Run(async () => await PublishUnprocessedEventsPeriodicallyAsync(logger, period, eventRepository, messageBroker));
-            logger.LogDebug(
+            logger.LogInformation(
                 $"Service will publish periodically ({period.ToString()}) events of type: {typeof(T).FullName}");
         }
 

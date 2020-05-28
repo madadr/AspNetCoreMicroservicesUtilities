@@ -1,4 +1,5 @@
 using Common.Api.Extensions;
+using Common.Api.Extensions.HealthChecks.v1;
 using Common.Application.Commands;
 using Common.Application.Commands.Handlers;
 using Common.Application.Events;
@@ -34,18 +35,17 @@ namespace Tickets.Api
             services.AddMongo();
             services.AddSingleton(typeof(IIntegrationEventRepository<TicketBoughtEvent>),
                 typeof(IntegrationEventRepository<TicketBoughtEvent>));
-            
+
             // Test API
             services.AddCounter<IProcessedCommands>();
-            
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-            });
+
+            services.AddTransient(typeof(IServiceHealthChecker), typeof(RabbitMqServiceHealthChecker));
+            services.AddTransient(typeof(IServiceHealthChecker), typeof(MongoDbServiceHealthChecker));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
+            logger.LogInformation("Configure called");
             app.PublishesEvent<TicketBoughtEvent>(logger);
 
             if (env.IsDevelopment())
@@ -58,15 +58,11 @@ namespace Tickets.Api
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
+                logger.LogInformation("Mapping HC");
+                endpoints.MapCommonHealthChecks(app);
+                logger.LogInformation("Mapping Controllers");
                 endpoints.MapControllers();
-            });
-            
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
-                c.RoutePrefix = string.Empty;
             });
         }
     }
-} 
+}
