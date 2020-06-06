@@ -2,7 +2,7 @@
 
 if ($args.count -eq 0)
 {
-    $args = @('Tickets', 'MailNotifications')
+    $args = @('Tickets.Api', 'MailNotifications.Api', 'Users.Api', 'ServiceRegistry')
 }
 
 for ($i = 0; $i -lt $args.count; $i++)
@@ -13,8 +13,8 @@ for ($i = 0; $i -lt $args.count; $i++)
     echo "=== === === === === === === === === === === === ==="
 
     $serviceLowerCase = $service.ToLower()
-    docker image rm -f choreography."$serviceLowerCase".api
-    docker build --no-cache -f ./"$service".Api/Dockerfile -t hc."$serviceLowerCase".api ./"$service".Api
+    docker image rm -f sd."$serviceLowerCase"
+    docker build --no-cache -f ./"$service"/Dockerfile -t sd."$serviceLowerCase" ./"$service"
 }
 
 cd ../Deploy
