@@ -5,16 +5,12 @@ using Common.Application.Commands.Handlers;
 using Common.Application.Events;
 using Common.Application.Events.Outbox;
 using Common.Infrastructure.Outbox;
-using Convey;
-using Convey.Discovery.Consul;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using Tickets.Api.TestApi;
 using Tickets.Application.Commands.Handlers;
 using Tickets.Application.TestApi;
 

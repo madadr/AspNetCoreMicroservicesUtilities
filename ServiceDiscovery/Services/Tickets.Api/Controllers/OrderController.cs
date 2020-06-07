@@ -6,7 +6,6 @@ using Common.Application.Commands.Handlers;
 using Common.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Tickets.Api.TestApi;
 
 namespace Tickets.Api.Controllers
 {

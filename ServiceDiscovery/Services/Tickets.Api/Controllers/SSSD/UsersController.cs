@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Tickets.Api.Controllers.Sssd
 {
@@ -19,49 +16,21 @@ namespace Tickets.Api.Controllers.Sssd
             _logger = logger;
         }
 
-        private static readonly string ServiceRegistryAddress = "http://service-registry:80/service";
+        private static readonly string RouterAddress = "http://router:80/users_service";
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
+            _logger.LogInformation("Get called");
             try
             {
-                await new HttpClient().GetAsync(await ResolveAddress("users_service") + "/users");
+                await new HttpClient().GetAsync(RouterAddress + "/users");
                 return Ok();
             }
             catch
             {
                 return BadRequest("Not resolved");
             }
-        }
-
-        private async Task<string> ResolveAddress(string serviceName)
-        {
-            var client = new HttpClient();
-            var response = await client.GetAsync(ServiceRegistryAddress + "/" + serviceName);
-            var addresses = JsonConvert.DeserializeObject<ResponseBody>(await response.Content.ReadAsStringAsync())
-                .Addresses;
-            var addressesCount = addresses?.Count;
-            if (addresses == null || addressesCount == 0)
-            {
-                throw new Exception();
-            }
-
-            var chosen = addresses[new Random().Next(0, addressesCount.Value)];
-            _logger.LogInformation(
-                $"Instances amount: {addressesCount}. Addresses: {JsonConvert.SerializeObject(addresses)}. Chosen: {chosen}");
-
-            return chosen;
-        }
-    }
-
-    internal struct ResponseBody
-    {
-        public IList<string> Addresses { get; set; }
-
-        public ResponseBody(IList<string> addresses)
-        {
-            Addresses = addresses;
         }
     }
 }

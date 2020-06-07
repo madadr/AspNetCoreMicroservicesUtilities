@@ -64,7 +64,7 @@ namespace Common.Api.Extensions
                 return false;
             }
 
-            logger.LogInformation($"UseServiceRegistry succeeded. Response {JsonConvert.SerializeObject(response)}");
+            logger.LogInformation("UseServiceRegistry succeeded.");
             return true;
         }
     }

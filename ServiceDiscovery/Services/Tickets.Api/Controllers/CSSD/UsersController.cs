@@ -8,18 +8,18 @@ using Newtonsoft.Json;
 
 namespace Tickets.Api.Controllers.Cssd
 {
+    #if (false)
     [ApiController]
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
+        private static readonly string ServiceRegistryAddress = "http://service-registry:80/service";
         private readonly ILogger _logger;
 
         public UsersController(ILogger<UsersController> logger)
         {
             _logger = logger;
         }
-
-        private static readonly string ServiceRegistryAddress = "http://service-registry:80/service";
 
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -64,4 +64,5 @@ namespace Tickets.Api.Controllers.Cssd
             Addresses = addresses;
         }
     }
+    #endif
 }

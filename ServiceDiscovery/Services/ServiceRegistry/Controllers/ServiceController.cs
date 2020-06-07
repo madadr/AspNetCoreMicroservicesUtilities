@@ -56,7 +56,7 @@ namespace ServiceRegistry.Controllers
         public async Task<IActionResult> GetStates()
         {
             _logger.LogInformation("GetStates");
-            return await Task.FromResult(Ok(new {states = _repository.GetInstanceStates()}));
+            return await Task.FromResult(Ok(_repository.GetInstanceStates()));
         }
 
         [HttpGet("{serviceName}")]

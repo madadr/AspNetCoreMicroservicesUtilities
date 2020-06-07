@@ -2,7 +2,7 @@ cd ../Services
 
 if ($args.count -eq 0)
 {
-    $args = @('Tickets.Api', 'MailNotifications.Api', 'Users.Api', 'ServiceRegistry')
+    $args = @('Tickets.Api', 'MailNotifications.Api', 'Users.Api', 'ServiceRegistry', 'Router')
 }
 
 for ($i = 0; $i -lt $args.count; $i++)

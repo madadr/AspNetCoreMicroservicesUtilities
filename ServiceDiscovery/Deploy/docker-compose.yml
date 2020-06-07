@@ -98,3 +98,10 @@ services:
     restart: on-failure
     ports:
       - 5999:80
+
+  router:
+    build: ../Services/Router
+    image: sd.router
+    restart: on-failure
+    ports:
+      - 6099:80
