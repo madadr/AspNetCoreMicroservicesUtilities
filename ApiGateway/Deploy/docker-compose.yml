@@ -1,0 +1,121 @@
+version: "3.8"
+
+volumes:
+  rabbit-volume: {}
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    volumes:
+      - rabbit-volume:/var/lib/rabbitmq/
+    ports:
+      - 5672:5672
+      - 15672:15672
+    logging:
+      driver: none # disable logs
+
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    logging:
+      driver: none # disable logs
+      
+  api:
+    build: ../Services/ApiGateway
+    image: apigw.api-gateway
+    restart: on-failure
+    ports:
+      - 9999:80
+
+  api-ocelot:
+    build: ../Services/ApiGateway.Ocelot
+    image: apigw.api-gateway-ocelot
+    restart: on-failure
+    ports:
+      - 10999:80
+
+  tickets-service:
+    build: ../Services/Tickets.Api
+    image: apigw.tickets.api
+    depends_on:
+      - rabbitmq
+      - mongo
+    links:
+      - rabbitmq
+      - mongo
+    ports:
+      - 5750:80
+    healthcheck:
+      test: curl --fail -s http://localhost:80/hc
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  users-service1:
+    environment:
+      - serviceRegistry:instanceAddress=http://users-service1:80
+    build: ../Services/Users.Api
+    image: apigw.users.api
+    ports:
+      - 5771:80
+    healthcheck:
+      test: curl --fail -s http://localhost:80/healthcheck
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  users-service2:
+    environment:
+      - serviceRegistry:instanceAddress=http://users-service2:80
+    build: ../Services/Users.Api
+    image: apigw.users.api
+    ports:
+      - 5772:80
+    healthcheck:
+      test: curl --fail -s http://localhost:80/healthcheck
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  users-service3:
+    environment:
+      - serviceRegistry:instanceAddress=http://users-service3:80
+    build: ../Services/Users.Api
+    image: apigw.users.api
+    ports:
+      - 5773:80
+    healthcheck:
+      test: curl --fail -s http://localhost:80/healthcheck
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  mail-notifications-api:
+    build: ../Services/MailNotifications.Api
+    image: apigw.mail-notifications.api
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+    restart: on-failure
+    ports:
+      - 5751:80
+
+  service-registry:
+    build: ../Services/ServiceRegistry
+    image: apigw.service-registry
+    restart: on-failure
+    ports:
+      - 5999:80
+
+  router:
+    build: ../Services/Router
+    image: apigw.router
+    restart: on-failure
+    ports:
+      - 6099:80
